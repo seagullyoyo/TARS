@@ -35,7 +35,7 @@ class BertModel(TextModel):
         bert_model = load_trained_model_from_checkpoint(config_path, checkpoint_path, seq_len=None)  # 加载预训练模型
 
         for l in bert_model.layers:
-            l.trainable = True
+            l.trainable = False
 
         input_words = Input(shape=(None,), name='input_words')
         input_pos = Input(shape=(None,), name='input_pos')
@@ -54,10 +54,10 @@ class BertModel(TextModel):
     def train(self, base_model=None):
         texts, labels, checkpoint, tensorboard, early_stopping, lr_decay = self.prepare()
 
-        train_texts = texts[:len(labels) * 0.95]
-        val_texts = texts[len(labels) * 0.95:]
-        train_labels = labels[:len(labels) * 0.95]
-        val_labels = labels[len(labels) * 0.95:]
+        train_texts = texts[:int(len(labels) * 0.95)]
+        val_texts = texts[int(len(labels) * 0.95):]
+        train_labels = labels[:int(len(labels) * 0.95)]
+        val_labels = labels[int(len(labels) * 0.95):]
 
         train_gen = BertDataGenerator(train_texts, train_labels, self.tokenizer, shuffle=True)
         valid_gen = BertDataGenerator(val_texts, val_labels, self.tokenizer)

@@ -5,14 +5,14 @@ import os
 from keras.callbacks import ModelCheckpoint, TensorBoard, EarlyStopping, ReduceLROnPlateau
 
 from config import Config
-from utils.text_data_utils import text_data_process
+from utils.text_data_utils import text_data_process, read_text_file
 
 
 class TextModel(object):
-    @classmethod
-    def prepare(cls):
+    @staticmethod
+    def prepare():
         print("Loading data...")
-        texts, labels = text_data_process(Config.text_train_data)
+        texts, labels = read_text_file(Config.text_train_data)
         # data = list(zip(texts, labels))
         # train_data = data[:len(data) * 0.95]
         # val_data = data[len(data) * 0.95:]
