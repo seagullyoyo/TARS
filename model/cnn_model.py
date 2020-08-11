@@ -55,25 +55,7 @@ class CnnModel(TextModel):
             self.model = load_model(base_model)
             self.model.compile(loss='categorical_crossentropy', optimizer=Nadam(lr=1e-5), metrics=['accuracy'])
         print("Loading data...")
-        texts, labels = text_data_process(Config.text_train_data)
-        # data = list(zip(texts, labels))
-        # train_data = data[:len(data) * 0.95]
-        # val_data = data[len(data) * 0.95:]
-
-        checkpoint_dir = os.path.join(Config.checkpoints_dir, Config.version)
-        if not os.path.exists(checkpoint_dir):
-            os.mkdir(checkpoint_dir)
-        checkpoint = ModelCheckpoint(filepath=checkpoint_dir + '/weights.{epoch:03d}-{val_acc:4f}.hdf5',
-                                     monitor='accuracy', verbose=1, save_best_only=True)
-
-        tensorboard_dir = os.path.join(Config.tensorboard_dir, Config.version)
-        if not os.path.exists(tensorboard_dir):
-            os.mkdir(tensorboard_dir)
-
-        tensorboard = TensorBoard(log_dir=tensorboard_dir, histogram_freq=0, write_graph=True, write_images=True)
-
-        early_stopping = EarlyStopping(monitor='train_loss', patience=10, verbose=1)
-        lr_decay = ReduceLROnPlateau(monitor='train_loss', patience=5, min_lr=1e-6)
+        texts, labels, checkpoint, tensorboard, early_stopping, lr_decay = self.prepare()
 
         self.model.fit(x=texts, y=labels, validation_split=0.95, batch_size=128, epochs=10,
                        callbacks=[checkpoint, tensorboard, early_stopping, lr_decay])
@@ -95,7 +77,7 @@ class CnnModel(TextModel):
         labels = np.argmax(labels, axis=1)
 
         print('Precision, Recall and F1-score')
-        print(metrics.classification_report(labels, predicts, target_names=['c0', 'c1']))
+        print(metrics.classification_report(labels, predicts))
         print('Confusion Matrix')
         print(metrics.confusion_matrix(labels, predicts))
         print('Print Wrong Cases')
