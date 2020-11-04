@@ -3,13 +3,13 @@
 
 class Config(object):
 
-    version = ''
-    checkpoints_dir = ''
-    tensorboard_dir = ''
-    save_model_dir = ''
+    version = 'bert'
+    checkpoints_dir = './checkpoint'
+    tensorboard_dir = './tensorboard'
+    save_model_dir = './saved_model'
 
     vocab_file = ''
-    text_train_data = ''
+    text_train_data = 'train.txt'
     text_test_data = ''
 
     seq_length = 128

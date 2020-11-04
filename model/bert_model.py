@@ -22,6 +22,7 @@ from utils.text_data_utils import text_data_process
 config_path = 'AdBertBase/bert_config.json'
 checkpoint_path = 'AdBertBase/model.ckpt'
 dict_path = 'AdBertBase/vocab.txt'
+learning_rate = 0.001
 
 
 class BertModel(TextModel):
@@ -46,7 +47,7 @@ class BertModel(TextModel):
 
         model = Model([input_words, input_pos], p)
         model.compile(loss='categorical_crossentropy',
-                      optimizer=Adam(1e-5),  # 用足够小的学习率
+                      optimizer=Adam(learning_rate),  # 用足够小的学习率
                       metrics=['accuracy', acc_top3])
         print(model.summary())
         return model
@@ -63,7 +64,7 @@ class BertModel(TextModel):
         valid_gen = BertDataGenerator(val_texts, val_labels, self.tokenizer)
 
         # 模型训练
-        self.model.fit(
+        self.model.fit_generator(
             train_gen.__iter__(),
             steps_per_epoch=len(train_gen),
             epochs=5,
